@@ -24,7 +24,7 @@ export function describeRules(r: PolicyRules): RuleLine[] {
   if (r.approvalOrderThresholdCents !== null)
     lines.push({ key: "order_approval", kind: "ask", label: "Ask me for orders over", value: usd(r.approvalOrderThresholdCents) });
   if (r.maxQuantityPerItem !== null)
-    lines.push({ key: "quantity", kind: "limit", label: "Most of any one item", value: String(r.maxQuantityPerItem) });
+    lines.push({ key: "quantity", kind: "limit", label: "Most of any one item", value: `${r.maxQuantityPerItem} units` });
   if (r.allowedMerchants?.length)
     lines.push({ key: "allowed_merchants", kind: "limit", label: "Only from", value: r.allowedMerchants.join(", ") });
   if (r.blockedMerchants.length)

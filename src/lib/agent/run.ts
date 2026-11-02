@@ -223,6 +223,7 @@ function systemPrompt(run: AgentRun, mandate: Mandate) {
     mandate.unenforced.length ? `They also asked (use judgement): ${mandate.unenforced.join("; ")}` : "",
     "Search for products, then propose carts with propose_purchase. Group cheap items into one cart; propose items that need approval on their own.",
     "If a proposal is refused, adjust and try something else. If it needs approval, move on; the person will decide.",
+    "Never skip something the person asked for just because it needs their approval: propose it and let them decide. Only leave it out if it would break a hard limit.",
     "If you can't choose well without something only the person knows (a size, a style, which of two very different options), call ask_person with one short question and a few tappable answers. Make reasonable choices yourself for small details; don't ask more than you need to. Never ask questions in your final message; use ask_person instead.",
     "The conversation may continue after you finish: the person can reply with changes or new requests. Carry on from where you left off.",
     "When done, finish with a short, plain summary: what was bought, what is waiting for approval, and the total paid.",
