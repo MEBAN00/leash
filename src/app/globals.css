@@ -1,26 +1,211 @@
 @import "tailwindcss";
 
+/* Leash: calm, trustworthy, precise. Warm paper neutrals tinted toward a
+   deep petrol ink. Decision colors (allow / ask / deny) are used as ink. */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: oklch(0.974 0.008 82);
+  --paper-sunken: oklch(0.951 0.011 82);
+  --surface: oklch(0.993 0.004 82);
+  --line: oklch(0.89 0.011 82);
+  --line-strong: oklch(0.81 0.014 82);
+
+  --ink: oklch(0.245 0.032 228);
+  --ink-2: oklch(0.43 0.026 228);
+  --ink-3: oklch(0.565 0.02 228);
+
+  --petrol: oklch(0.43 0.072 212);
+  --petrol-strong: oklch(0.35 0.066 214);
+  --petrol-tint: oklch(0.945 0.019 206);
+
+  --allow: oklch(0.5 0.115 156);
+  --allow-tint: oklch(0.952 0.032 156);
+  --ask: oklch(0.52 0.115 66);
+  --ask-tint: oklch(0.955 0.045 86);
+  --deny: oklch(0.53 0.165 31);
+  --deny-tint: oklch(0.952 0.028 31);
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --shadow-slip: 0 1px 0 oklch(0.245 0.032 228 / 0.04), 0 8px 24px -12px oklch(0.245 0.032 228 / 0.18);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-sunken: var(--paper-sunken);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-petrol: var(--petrol);
+  --color-petrol-strong: var(--petrol-strong);
+  --color-petrol-tint: var(--petrol-tint);
+  --color-allow: var(--allow);
+  --color-allow-tint: var(--allow-tint);
+  --color-ask: var(--ask);
+  --color-ask-tint: var(--ask-tint);
+  --color-deny: var(--deny);
+  --color-deny-tint: var(--deny-tint);
+
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  font-feature-settings: "ss01";
+}
+
+/* Type: size-specific tracking and leading, tight as it grows. */
+.display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.022em;
+}
+.title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: clamp(1.45rem, 1.2rem + 0.9vw, 1.95rem);
+  line-height: 1.15;
+  letter-spacing: -0.014em;
+}
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+/* Lining figures. (Tabular figures in this face widen the decimal point.) */
+.num {
+  font-variant-numeric: lining-nums;
+}
+
+/* Buttons: feedback on press, instantly. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 1.15rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.005em;
+  transition:
+    transform 100ms ease-out,
+    background-color 160ms ease-out,
+    box-shadow 160ms ease-out,
+    opacity 160ms ease-out;
+  white-space: nowrap;
+  user-select: none;
+  touch-action: manipulation;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn:focus-visible,
+.field:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--petrol);
+  outline-offset: 2px;
+}
+.btn-primary {
+  background: var(--petrol);
+  color: var(--surface);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.14), 0 1px 2px oklch(0.245 0.032 228 / 0.2);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--petrol-strong);
+}
+.btn-ghost {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--paper-sunken);
+}
+.btn-quiet {
+  color: var(--ink-2);
+  padding: 0 0.6rem;
+}
+.btn-quiet:hover:not(:disabled) {
+  color: var(--ink);
+}
+
+.field {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  color: var(--ink);
+  transition: border-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+.field::placeholder {
+  color: var(--ink-3);
+}
+.field:focus {
+  border-color: var(--petrol);
+  box-shadow: 0 0 0 4px oklch(0.43 0.072 212 / 0.12);
+  outline: none;
+}
+
+/* Receipt slip with a torn (zig-zag) bottom edge. */
+.slip {
+  position: relative;
+  background: var(--surface);
+  box-shadow: var(--shadow-slip);
+  border-radius: 6px 6px 0 0;
+  --tear: 7px;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--tear)) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--tear) * 2) var(--tear) repeat-x;
+}
+
+/* Translucent chrome: content scrolls underneath. */
+.material {
+  background: oklch(0.974 0.008 82 / 0.72);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    background: var(--paper);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+::selection {
+  background: var(--petrol-tint);
 }

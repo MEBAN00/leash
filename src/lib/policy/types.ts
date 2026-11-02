@@ -51,6 +51,9 @@ export const cartItemSchema = z.object({
   currency: z.string(),
   category: z.string().nullable(),
   recurring: z.boolean(),
+  // Display only; the policy engine ignores these.
+  imageUrl: z.string().nullable().optional(),
+  productUrl: z.string().nullable().optional(),
 });
 
 export const cartSchema = z.object({ items: z.array(cartItemSchema) });

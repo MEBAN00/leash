@@ -43,3 +43,7 @@ next-env.d.ts
 
 # local spike output (contains sandbox vault token ids)
 .spike-state.json
+
+.claude/
+# local Claude Code / preview config (machine-specific)
+.claude/
