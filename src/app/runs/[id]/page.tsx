@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { BudgetMeter } from "@/components/budget-meter";
 import { Warning } from "@/components/icons";
-import { LiveRefresh } from "@/components/live-refresh";
 import { PhoneQr } from "@/components/phone-qr";
 import { RuleList } from "@/components/rule-list";
 import { RunReply } from "@/components/run-reply";
@@ -61,8 +60,6 @@ export default async function RunPage({ params }: PageProps<"/runs/[id]">) {
 
   return (
     <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
-      <LiveRefresh runId={run.id} />
-
       <section className="min-w-0 lg:col-span-8">
         <p className={`eyebrow ${run.status === "waiting_input" ? "text-ask" : ""}`}>
           {

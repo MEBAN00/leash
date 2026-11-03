@@ -35,7 +35,7 @@ export async function Nav() {
         </div>
       </header>
       <NavLinks pending={pending} variant="bottom" />
-      <LiveRefresh types={["purchase.", "mandate.", "wallet.", "agent.question", "person.reply"]} />
+      <LiveRefresh />
     </>
   );
 }

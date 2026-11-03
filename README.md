@@ -12,7 +12,7 @@ Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com/) (dea
 
 ## Stack
 
-- Next.js 16 + TypeScript, deployed on Railway
+- Next.js 16 + TypeScript, deployed on Vercel
 - Postgres via Drizzle: local Postgres in dev, Supabase in production
 - OpenAI via the Vercel AI SDK (`OPENAI_MODEL` env var)
 - PayPal: Payment Tokens API (vault a wallet) + Orders v2 (charge `vault_id`, buyer not present)
@@ -58,13 +58,14 @@ pnpm spike:agent --inject "Plan a birthday party for 12 kids"
 
 For `spike:vault start`, run `pnpm dev` in another terminal so the PayPal return page loads.
 
-## Deploying (Railway + Supabase)
+## Deploying (Vercel + Supabase)
 
-- Railway runs `pnpm build` then `pnpm start` (Next reads Railway's `PORT`).
-- Use Supabase's **session pooler** connection string for `DATABASE_URL` (IPv4-friendly).
-  The transaction pooler (port 6543) also works; prepared statements are turned off for it automatically.
-- Set `APP_URL` to the Railway URL so PayPal redirects back correctly.
+- Import the GitHub repository into Vercel; it detects Next.js and pnpm automatically.
+- Use Supabase's **transaction pooler** connection string (port 6543) for `DATABASE_URL`.
+- Add every variable from `.env.example` to Vercel, using sandbox credentials for PayPal.
+- Set `APP_URL` to the production Vercel URL so PayPal redirects back correctly.
 - Run `pnpm db:migrate` against Supabase once (locally with the Supabase `DATABASE_URL`).
+- The activity cursor is polled from Postgres, so live pages work across Vercel function instances.
 
 ## Hackathon scope note
 

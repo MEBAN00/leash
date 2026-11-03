@@ -5,8 +5,15 @@ import * as schema from "./schema";
 
 function createClient() {
   const url = env("DATABASE_URL");
-  // Supabase's transaction pooler (port 6543) doesn't support prepared statements.
-  return postgres(url, { prepare: !url.includes(":6543"), max: 10 });
+  const serverless = process.env.VERCEL === "1" || url.includes(":6543");
+  // Supabase's transaction pooler and ephemeral hosts need a tiny local pool
+  // with prepared statements disabled. Local and long-lived servers keep the
+  // larger pool used during development.
+  return postgres(url, {
+    prepare: !serverless,
+    max: serverless ? 1 : 10,
+    ssl: serverless ? "require" : undefined,
+  });
 }
 
 // Reuse one pool across dev hot reloads.

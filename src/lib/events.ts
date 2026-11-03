@@ -1,10 +1,8 @@
-import { EventEmitter } from "node:events";
 import { db, schema } from "../db";
 import type { AuditEvent } from "../db/schema";
 
-// Every agent step and policy decision is written to the audit log and
-// broadcast in-process so open pages update live over SSE. Railway runs one
-// long-lived Node process, so an in-memory emitter is enough.
+// Every agent step and policy decision is written to the audit log. Clients
+// poll the latest row, which works across ephemeral and multi-instance hosts.
 
 export type EventType =
   | "run.started"
@@ -22,9 +20,6 @@ export type EventType =
   | "mandate.activated"
   | "wallet.connected";
 
-const g = globalThis as unknown as { leashBus?: EventEmitter };
-const bus = (g.leashBus ??= new EventEmitter().setMaxListeners(100));
-
 export async function recordEvent(e: {
   type: EventType;
   runId?: string | null;
@@ -35,11 +30,5 @@ export async function recordEvent(e: {
     .insert(schema.auditEvents)
     .values({ type: e.type, runId: e.runId ?? null, mandateId: e.mandateId ?? null, payload: e.payload })
     .returning();
-  bus.emit("event", row);
   return row;
-}
-
-export function subscribe(fn: (e: AuditEvent) => void): () => void {
-  bus.on("event", fn);
-  return () => bus.off("event", fn);
 }

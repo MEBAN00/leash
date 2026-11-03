@@ -4,32 +4,41 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 /**
- * Subscribes to the server's event stream and re-renders the page's server
- * components whenever something relevant happens. Pages stay plain server
- * components; this just tells them when to refresh.
+ * Polls a durable event cursor and re-renders the page's server components
+ * when it changes. This works when requests land on different serverless
+ * instances, while keeping the pages themselves as server components.
  */
-export function LiveRefresh({ runId, types }: { runId?: string; types?: string[] }) {
+export function LiveRefresh() {
   const router = useRouter();
-  const typeKey = types?.join(",") ?? "";
 
   useEffect(() => {
-    const url = runId ? `/api/events?runId=${encodeURIComponent(runId)}` : "/api/events";
-    const source = new EventSource(url);
-    const prefixes = typeKey ? typeKey.split(",") : null;
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let cursor: string | null | undefined;
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
 
-    source.onmessage = (msg) => {
-      const event = JSON.parse(msg.data) as { type: string };
-      if (prefixes && !prefixes.some((t) => event.type.startsWith(t))) return;
-      clearTimeout(timer);
-      timer = setTimeout(() => router.refresh(), 120);
+    const poll = async () => {
+      if (document.visibilityState === "visible") {
+        try {
+          const response = await fetch("/api/events", { cache: "no-store" });
+          if (response.ok) {
+            const latest = (await response.json()) as { id: string } | null;
+            const nextCursor = latest?.id ?? null;
+            if (cursor !== undefined && nextCursor !== cursor) router.refresh();
+            cursor = nextCursor;
+          }
+        } catch {
+          // A later poll will recover from a transient network failure.
+        }
+      }
+      if (!stopped) timer = setTimeout(poll, 2_000);
     };
 
+    void poll();
     return () => {
+      stopped = true;
       clearTimeout(timer);
-      source.close();
     };
-  }, [router, runId, typeKey]);
+  }, [router]);
 
   return null;
 }
