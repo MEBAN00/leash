@@ -64,7 +64,8 @@ For `spike:vault start`, run `pnpm dev` in another terminal so the PayPal return
 - Use Supabase's **transaction pooler** connection string (port 6543) for `DATABASE_URL`.
 - Add every variable from `.env.example` to Vercel, using sandbox credentials for PayPal.
 - Set `APP_URL` to the production Vercel URL so PayPal redirects back correctly.
-- Run `pnpm db:migrate` against Supabase once (locally with the Supabase `DATABASE_URL`).
+- Run `pnpm db:migrate` against Supabase once from your computer, using its direct connection
+  string or **session pooler** string in `.env.local`; migrations should not use transaction mode.
 - The activity cursor is polled from Postgres, so live pages work across Vercel function instances.
 
 ## Hackathon scope note
